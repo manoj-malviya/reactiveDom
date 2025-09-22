@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reactiveDom JS</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .main {
+            padding: 1rem;
+            border: 1px solid #FFBF00;
+            border-radius: 1rem;
+        }
+
+        .danger {
+            border: 2px solid #ff0000 !important;
+        }
+
+        .city-dropdown {
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .city-dropdown .list-group {
+            position: absolute;
+            width: 100%;
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .city-dropdown .list-group-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+        }
+
+        .city-dropdown .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/picocss/2.0.6/pico.amber.min.css'
+        integrity='sha512-kvYLueAc7RD0XOfxhjiaUKbXBmh5JTZdyJo/12oY/zpT0l6o82H2Ap5f27CrAa16VgvXj02Rsb0Prwtq7oYOSw=='
+        crossorigin='anonymous' />
+</head>
+
+<body>
+
+    <!-- Signals Only with reactiveDom JS -->
+    <!-- bind:value|text|html|property, class:, this, if -->
+
+    <div class="main border" class:danger="isDanger">
+    
+        <p>
+        <fieldset>
+            <legend>Table</legend>
+            <div>
+                <input type="number" bind:value="tableNumber" />
+            </div>
+            <div>
+                <ul class="list-group" foreach="table">
+                    <li class="list-group-item">
+                        ${item}
+                    </li>
+                </ul>
+            </div>
+        </fieldset>
+        </p>
+        <p>
+            <fieldset>
+                <legend>EMI Calculator</legend>
+                <div>
+                    <label for="loanAmount">Loan Amount (₹)</label>
+                    <input type="number" id="loanAmount" bind:value="loanAmount" min="0" step="1000" />
+                </div>
+                <div>
+                    <label for="interestRate">Interest Rate: <span bind:text="interestRate"></span>%</label>
+                    <input type="range" id="interestRate" bind:value="interestRate" min="1" max="30" step="0.1" />
+                </div>
+                <div>
+                    <label for="loanTerm">Loan Term (Years)</label>
+                    <input type="number" id="loanTerm" bind:value="loanTerm" min="1" max="30" />
+                </div>
+                <div>
+                    <h4>Monthly EMI: ₹<span bind:text="monthlyEMI"></span></h4>
+                </div>
+            </fieldset>
+        </p>
+
+        <p>
+            <fieldset>
+                <legend>City Search</legend>
+                <div>
+                    <label for="citySearch">Search City</label>
+                    <input type="text" id="citySearch" bind:value="citySearch" placeholder="Type to search cities..." />
+                </div>
+                <div if="filteredCities.length > 0" class="city-dropdown">
+                    <ul class="list-group">
+                        <li class="list-group-item" foreach="filteredCities" onclick="selectCity">
+                            ${item.name} - Population: ${item.population.toLocaleString()}
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+        </p>
+    </div>
+
+    <!-- reactiveDom JS -->
+
+    <script src="signal.js"></script>
+    <script src="dom.js"></script>
+
+    <script>
+        const tableNumber = signal(0);
+        const table = compute(() => {
+            let table = [];
+            for (let i = 1; i <= 10; i++) {
+                table.push(`${tableNumber.value} x ${i} = ${tableNumber.value * i}`);
+            }
+            return table;
+        });
+
+
+        // EMI Calculator signals
+        const loanAmount = signal(100000);
+        const interestRate = signal(8.5);
+        const loanTerm = signal(5);
+        const monthlyEMI = compute(() => {
+            const principal = loanAmount.value;
+            const rate = interestRate.value / 100 / 12; // monthly interest rate
+            const time = loanTerm.value * 12; // total number of months
+            
+            const emi = principal * rate * Math.pow(1 + rate, time) / (Math.pow(1 + rate, time) - 1);
+            return emi.toFixed(2);
+        });
+
+        // City search functionality
+        const citySearch = signal("New York");
+        var selectedCity = signal(null);
+        
+        const cities = [
+            { name: "New York", population: 8804190 },
+            { name: "Los Angeles", population: 3898747 },
+            { name: "Chicago", population: 2746388 },
+            { name: "Houston", population: 2304580 },
+            { name: "Phoenix", population: 1608139 },
+            { name: "Philadelphia", population: 1603797 },
+            { name: "San Antonio", population: 1547253 },
+            { name: "San Diego", population: 1386932 },
+            { name: "Dallas", population: 1331006 },
+            { name: "San Jose", population: 1013240 }
+        ];
+
+        const filteredCities = compute(() => {
+            if (!citySearch.value) return [];
+            const searchTerm = citySearch.value.toLowerCase();
+            return cities.filter(city => 
+                city.name.toLowerCase().includes(searchTerm)
+            ).slice(0, 5); // Show only top 5 matches
+        });
+
+        function selectCity(event, index, item) {
+            selectedCity.value = item;
+            citySearch.value = item.name;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            reactiveDom(window.explicitReactive, null, {
+                tableNumber,
+                table,
+                loanAmount,
+                interestRate,
+                loanTerm,
+                monthlyEMI,
+                citySearch,
+                filteredCities,
+                selectedCity,
+                cities,
+            })
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reactiveDom JS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="signal.js"></script>
+    <script src="dom.js"></script>
+</head>
+
+<body>
+<div class="container mx-auto max-w-2xl bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-700 space-y-8">
+    <h2>App 2</h2>
+    <div class="space-y-4">
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4" id="appCarSelection">
+      <legend class="text-lg font-semibold text-slate-300 px-2">Brand and Model Selection</legend>
+      <div class="space-y-4">
+        <div>
+          <label for="brandSelect" class="block mb-2 text-slate-300">Select Brand</label>
+          <select id="brandSelect" bind:value="selectedBrand" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Select a brand</option>
+            <option value="toyota">Toyota</option>
+            <option value="honda">Honda</option>
+            <option value="bmw">BMW</option>
+            <option value="audi">Audi</option>
+          </select>
+        </div>
+        <div>
+          <label for="modelSelect" class="block mb-2 text-slate-300">Select Model</label>
+          <select id="modelSelect" bind:value="selectedModel" this="modelSelect" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Select a model</option>
+            <option foreach="availableModels" value="${item.value}">${item.label}</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <hr class="border-slate-700">
+    </div>
+</div>
+
+    <script>
+        const app = {
+          data: {
+            selectedBrand: signal("") ,
+            selectedModel: signal("")
+          },
+          computed: {
+            availableModels: function() {
+              const brand = app.data.selectedBrand.value;
+              const models = {
+                toyota: [
+                  { value: "corolla", label: "Corolla" },
+                  { value: "camry", label: "Camry" },
+                  { value: "rav4", label: "RAV4" }
+                ],
+                honda: [
+                  { value: "civic", label: "Civic" },
+                  { value: "accord", label: "Accord" },
+                  { value: "crv", label: "CR-V" }
+                ],
+                bmw: [
+                  { value: "series3", label: "3 Series" },
+                  { value: "series5", label: "5 Series" },    
+                  { value: "x3", label: "X3" }
+                ],
+                audi: [
+                  { value: "a4", label: "A4" },
+                  { value: "a6", label: "A6" },
+                  { value: "q5", label: "Q5" }
+                ]
+              };
+              return models[brand] || [];
+            }
+          },
+          methods: {
+            resetBrand() {
+              app.data.selectedBrand.value = "";
+              app.data.selectedModel.value = "";
+            }
+          },
+          mounted() {
+            console.log("App mounted!");
+          }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+          reactiveDom(app, document.getElementById('appCarSelection'));
+        });
+    </script>
+</body>
+
+</html>

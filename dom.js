@@ -1,6 +1,8 @@
 const reactiveDom = (function() {
   // Shared data object
   let data = {};
+  // Store app options for convention-based API
+  let appOptions = null;
 
   // Helper function to get nested object property value
   function getNestedValue(obj, path) {
@@ -172,20 +174,47 @@ const reactiveDom = (function() {
   }
 
   // Main reactiveDom function
-  function reactiveDom(explicitReactive = false, targetElement = null, newData = {}) {
-    // Update the shared data object
-    data = { ...data, ...newData };
-    
+  function reactiveDom(options = {}, targetElement = null) {
+    // If passed an options object (Vue-like), auto-register data, computed, methods
+    if (typeof options === "object" && options !== null) {
+      appOptions = options;
+      // Register data
+      if (appOptions.data) {
+        Object.keys(appOptions.data).forEach(key => {
+          data[key] = appOptions.data[key];
+        });
+      }
+      // Register computed (auto-wrap with compute)
+      if (appOptions.computed) {
+        Object.keys(appOptions.computed).forEach(key => {
+          if (typeof appOptions.computed[key] === "function") {
+            data[key] = compute(appOptions.computed[key]);
+          } else {
+            data[key] = appOptions.computed[key];
+          }
+        });
+      }
+      // Register methods
+      if (appOptions.methods) {
+        Object.keys(appOptions.methods).forEach(key => {
+          data[key] = appOptions.methods[key];
+        });
+      }
+      // Call mounted hook if present
+      if (typeof appOptions.mounted === "function") {
+        appOptions.mounted();
+      }
+      // Use document.body as default target
+      targetElement = targetElement || document.body;
+    }
+
     const elements = targetElement 
       ? targetElement.querySelectorAll("*")
-      : explicitReactive
-        ? document.querySelectorAll("[reactiveDom]")
-        : document.querySelectorAll("*");
-    
+      : document.querySelectorAll("*");
+
     console.log(`Loading reactiveDom with ${elements.length} elements`);
-    
+
     elements.forEach((element) => {
-      if (explicitReactive && !element.hasAttribute("reactiveDom")) return;
 
       [...element.attributes].forEach((attr) => {
         const attrName = attr.name;

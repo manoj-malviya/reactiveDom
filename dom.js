@@ -11,7 +11,7 @@ const reactiveDom = (function() {
 
   // Handle 'this' attribute binding
   function handleThisBinding(element, attrValue) {
-    data[attrValue] = element;
+    window[attrValue] = element;
   }
 
   // Handle checkbox group binding

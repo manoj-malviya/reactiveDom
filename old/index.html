@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reactiveDom JS</title>
+    <style>
+        .danger {
+            border: 2px solid #ff0000 !important;
+        }
+
+        .city-dropdown {
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .city-dropdown .list-group {
+            position: absolute;
+            width: 100%;
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .city-dropdown .list-group-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+        }
+
+        .city-dropdown .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+    <!-- Signals Only with reactiveDom JS -->
+    <!-- bind:value|text|html|property, class:, this, if -->
+
+    <div class="p-6 bg-slate-900 text-slate-200 min-h-screen">
+
+        <div
+            class="container mx-auto max-w-2xl bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-700 space-y-8">
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-slate-300">Counter</h2>
+                <div class="flex items-center space-x-4">
+                    <input type="number" bind:value="count"
+                        class="w-24 p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <p>Value: <span bind:text="count" class="font-bold text-lg text-green-400"></span></p>
+                    <p>Computed: <span bind:text="computedValue" class="font-bold text-lg text-teal-400"></span></p>
+                </div>
+                <button this="button"
+                    class="px-6 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">Reset</button>
+            </div>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">Fruits</legend>
+                <ul bind:html="fruits" class="list-none space-y-2"></ul>
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="apple" name="fruit[]" value="apple" bind:group="selectedFruits"
+                            class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+                        <label for="apple" class="text-slate-300">Apple</label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="banana" name="fruit[]" value="banana" bind:group="selectedFruits"
+                            class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+                        <label for="banana" class="text-slate-300">Banana</label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="mango" name="fruit[]" value="mango" bind:group="selectedFruits"
+                            class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+                        <label for="mango" class="text-slate-300">Mango</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">Agree</legend>
+                <div if="agreement" class="p-4 rounded-md bg-rose-900 text-rose-200" class:danger="isDanger">
+                    <h3 class="text-lg font-semibold">Conditional Agree</h3>
+                </div>
+                <div class="flex space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" id="agree-no" name="agree" value="no" bind:group="agree"
+                            class="h-4 w-4 text-sky-600 focus:ring-sky-500">
+                        <label for="agree-no" class="text-slate-300">No</label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="radio" id="agree-yes" name="agree" value="yes" bind:group="agree"
+                            class="h-4 w-4 text-sky-600 focus:ring-sky-500">
+                        <label for="agree-yes" class="text-slate-300">Yes</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">Table</legend>
+                <div class="flex flex-col space-y-4">
+                    <input type="number" bind:value="tableNumber"
+                        class="p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <ul class="list-none space-y-2" foreach="table">
+                        <li class="p-3 bg-slate-700 rounded-md">
+                            ${item}
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">User Ages</legend>
+                <div class="flex items-center space-x-4">
+                    <input type="number" bind:value="age"
+                        class="p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <button this="addage"
+                        class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">Add</button>
+                </div>
+                <ul class="list-none space-y-2">
+                    <li class="flex items-center justify-between p-3 bg-slate-700 rounded-md" foreach="users">
+                        <span>Name: ${item.name} Age: ${item.age}</span>
+                        <button onclick="removeUser"
+                            class="px-3 py-1 bg-rose-600 text-white rounded-md hover:bg-rose-500 transition-colors duration-200">Remove</button>
+                    </li>
+                </ul>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">EMI Calculator</legend>
+                <div class="space-y-4">
+                    <div>
+                        <label for="loanAmount" class="block mb-2 text-slate-300">Loan Amount (₹)</label>
+                        <input type="number" id="loanAmount" bind:value="loanAmount" min="0" step="1000"
+                            class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                    <div>
+                        <label for="interestRate" class="block mb-2 text-slate-300">Interest Rate: <span
+                                bind:text="interestRate" class="font-semibold text-lg text-teal-400"></span>%</label>
+                        <input type="range" id="interestRate" bind:value="interestRate" min="1" max="30" step="0.1"
+                            class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="loanTerm" class="block mb-2 text-slate-300">Loan Term (Years)</label>
+                        <input type="number" id="loanTerm" bind:value="loanTerm" min="1" max="30"
+                            class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h4 class="text-lg font-bold">Monthly EMI: <span class="text-green-400">₹<span
+                                bind:text="monthlyEMI"></span></span></h4>
+                </div>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">Brand and Model Selection</legend>
+                <div class="space-y-4">
+                    <div>
+                        <label for="brandSelect" class="block mb-2 text-slate-300">Select Brand</label>
+                        <select id="brandSelect" bind:value="selectedBrand"
+                            class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <option value="">Select a brand</option>
+                            <option value="toyota">Toyota</option>
+                            <option value="honda">Honda</option>
+                            <option value="bmw">BMW</option>
+                            <option value="audi">Audi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modelSelect" class="block mb-2 text-slate-300">Select Model</label>
+                        <select id="modelSelect" bind:value="selectedModel" this="modelSelect"
+                            class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <option value="">Select a model</option>
+                            <option foreach="availableModels" value="${item.value}">${item.label}</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <hr class="border-slate-700">
+
+            <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+                <legend class="text-lg font-semibold text-slate-300 px-2">City Search</legend>
+                <div class="relative">
+                    <label for="citySearch" class="block mb-2 text-slate-300">Search City</label>
+                    <input type="text" id="citySearch" bind:value="citySearch" placeholder="Type to search cities..."
+                        class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div if="filteredCities.length > 0" class="bg-slate-700 rounded-md border border-slate-600">
+                    <ul class="divide-y divide-slate-600">
+                        <li class="p-3 hover:bg-slate-600 cursor-pointer transition-colors duration-200"
+                            foreach="filteredCities" onclick="selectCity">
+                            ${item.name} - Population: ${item.population.toLocaleString()}
+                        </li>
+                    </ul>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+    <!-- reactiveDom JS -->
+
+    <script src="signal.js"></script>
+    <script src="dom.v3.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            reactiveDom(window.explicitReactive)
+        })
+        // Complete DOM api has only following directives 
+
+        // with dom, signal must use var
+        var count = signal(0);
+        var computedValue = compute(() => count.value * 10);
+
+        var selectedFruits = signal(["mango"]);
+        var fruits = compute(() =>
+            selectedFruits.value.map((f) => `<li class="list-group-item">${f}</li>`).join(""),
+        );
+
+        var agree = signal("yes");
+        var agreement = compute(() =>
+            agree.value == "yes" ? true : false,
+        );
+
+        var tableNumber = signal(0);
+        var table = compute(() => {
+            let table = [];
+            for (let i = 1; i <= 10; i++) {
+                table.push(`${tableNumber.value} x ${i} = ${tableNumber.value * i}`);
+            }
+            return table;
+        });
+
+        var users = signal([
+            { name: "John", age: 25 },
+            { name: "Jane", age: 30 },
+            { name: "Jim", age: 35 },
+        ]);
+
+        var age = signal(0);
+
+        // EMI Calculator signals
+        var loanAmount = signal(100000);
+        var interestRate = signal(8.5);
+        var loanTerm = signal(5);
+        var monthlyEMI = compute(() => {
+            const principal = loanAmount.value;
+            const rate = interestRate.value / 100 / 12; // monthly interest rate
+            const time = loanTerm.value * 12; // total number of months
+
+            const emi = principal * rate * Math.pow(1 + rate, time) / (Math.pow(1 + rate, time) - 1);
+            return emi.toFixed(2);
+        });
+
+        // City search functionality
+        var citySearch = signal("New York");
+        var selectedCity = signal(null);
+
+        const cities = [
+            { name: "New York", population: 8804190 },
+            { name: "Los Angeles", population: 3898747 },
+            { name: "Chicago", population: 2746388 },
+            { name: "Houston", population: 2304580 },
+            { name: "Phoenix", population: 1608139 },
+            { name: "Philadelphia", population: 1603797 },
+            { name: "San Antonio", population: 1547253 },
+            { name: "San Diego", population: 1386932 },
+            { name: "Dallas", population: 1331006 },
+            { name: "San Jose", population: 1013240 }
+        ];
+
+        var filteredCities = compute(() => {
+            if (!citySearch.value) return [];
+            const searchTerm = citySearch.value.toLowerCase();
+            return cities.filter(city =>
+                city.name.toLowerCase().includes(searchTerm)
+            ).slice(0, 5); // Show only top 5 matches
+        });
+
+        function selectCity(event, index, item) {
+            selectedCity.value = item;
+            citySearch.value = item.name;
+        }
+
+        var isDanger = compute(() => count.value > 30 ? true : false);
+        var showItem = compute(() => count.value > 30 ? true : false);
+
+        function removeUser(event, index, item, arraySignalName) {
+            console.log(event, index, item, arraySignalName);
+            users.value = users.value.filter((_, i) => i != index);
+        }
+
+        // Brand and Model Selection
+        var selectedBrand = signal("");
+        var selectedModel = signal("");
+
+        const brandModels = {
+            toyota: [
+                { value: "camry", label: "Camry" },
+                { value: "corolla", label: "Corolla" },
+                { value: "rav4", label: "RAV4" }
+            ],
+            honda: [
+                { value: "civic", label: "Civic" },
+                { value: "accord", label: "Accord" },
+                { value: "crv", label: "CR-V" }
+            ],
+            bmw: [
+                { value: "3series", label: "3 Series" },
+                { value: "5series", label: "5 Series" },
+                { value: "x5", label: "X5" }
+            ],
+            audi: [
+                { value: "a4", label: "A4" },
+                { value: "a6", label: "A6" },
+                { value: "q5", label: "Q5" }
+            ]
+        };
+
+        var availableModels = compute(() => {
+            if (!selectedBrand.value) return [];
+            return brandModels[selectedBrand.value] || [];
+        });
+
+        var isModelDisabled = compute(() => {
+            return availableModels.value.length === 0;
+        });
+
+        function generateName() {
+            let length = 5;
+            const characters = 'abcdefghijklmnopqrstuvwxyz';
+            let result = ' ';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+                result +=
+                    characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result
+        }
+
+        document.addEventListener('DOMContentLoaded', app);
+        function app() {
+
+            console.log('loaded')
+            button.addEventListener('click', function () {
+                count.value = 0;
+            })
+
+            addage.addEventListener('click', function () {
+                age.value = Math.floor(Math.random() * 100);
+                users.value = [...users.value, { name: generateName(), age: age.value }];
+            })
+            // make sure it runs after DOMContentLoaded
+            watch(count, (oldValue, newValue) => {
+                console.log(`count changed from ${oldValue} to ${newValue}`)
+                if (newValue > 50) {
+                    alert("Above 50 not allowed");
+                    count.value = 50;
+                }
+            })
+
+            modelSelect.disabled = isModelDisabled.value;
+            watch(isModelDisabled, (oldValue, newValue) => {
+                console.log(`isModelDisabled changed from ${oldValue} to ${newValue}`)
+                if (newValue) {
+                    modelSelect.disabled = true;
+                } else {
+                    modelSelect.disabled = false;
+                }
+            })
+
+        }
+    </script>
+</body>
+
+</html>

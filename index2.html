@@ -6,19 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>reactiveDom JS</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .main {
-            padding: 1rem;
-            border: 1px solid #FFBF00;
-            border-radius: 1rem;
-        }
-
         .danger {
             border: 2px solid #ff0000 !important;
         }
@@ -47,9 +34,8 @@
         }
     </style>
 
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/picocss/2.0.6/pico.amber.min.css'
-        integrity='sha512-kvYLueAc7RD0XOfxhjiaUKbXBmh5JTZdyJo/12oY/zpT0l6o82H2Ap5f27CrAa16VgvXj02Rsb0Prwtq7oYOSw=='
-        crossorigin='anonymous' />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
@@ -57,61 +43,134 @@
     <!-- Signals Only with reactiveDom JS -->
     <!-- bind:value|text|html|property, class:, this, if -->
 
-    <div class="main border" class:danger="isDanger">
-    
-        <p>
-        <fieldset>
-            <legend>Table</legend>
-            <div>
-                <input type="number" bind:value="tableNumber" />
-            </div>
-            <div>
-                <ul class="list-group" foreach="table">
-                    <li class="list-group-item">
-                        ${item}
-                    </li>
-                </ul>
-            </div>
-        </fieldset>
-        </p>
-        <p>
-            <fieldset>
-                <legend>EMI Calculator</legend>
-                <div>
-                    <label for="loanAmount">Loan Amount (₹)</label>
-                    <input type="number" id="loanAmount" bind:value="loanAmount" min="0" step="1000" />
-                </div>
-                <div>
-                    <label for="interestRate">Interest Rate: <span bind:text="interestRate"></span>%</label>
-                    <input type="range" id="interestRate" bind:value="interestRate" min="1" max="30" step="0.1" />
-                </div>
-                <div>
-                    <label for="loanTerm">Loan Term (Years)</label>
-                    <input type="number" id="loanTerm" bind:value="loanTerm" min="1" max="30" />
-                </div>
-                <div>
-                    <h4>Monthly EMI: ₹<span bind:text="monthlyEMI"></span></h4>
-                </div>
-            </fieldset>
-        </p>
+    <div class="p-6 bg-slate-900 text-slate-200 min-h-screen">
 
-        <p>
-            <fieldset>
-                <legend>City Search</legend>
-                <div>
-                    <label for="citySearch">Search City</label>
-                    <input type="text" id="citySearch" bind:value="citySearch" placeholder="Type to search cities..." />
-                </div>
-                <div if="filteredCities.length > 0" class="city-dropdown">
-                    <ul class="list-group">
-                        <li class="list-group-item" foreach="filteredCities" onclick="selectCity">
-                            ${item.name} - Population: ${item.population.toLocaleString()}
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </p>
-    </div>
+  <div id="app1" class="container mx-auto max-w-2xl bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-700 space-y-8">
+    
+    <div class="space-y-4">
+      <!-- <h2 class="text-xl font-semibold text-slate-300">Counter</h2>
+      <div class="flex items-center space-x-4">
+        <input type="number" bind:value="count" class="w-24 p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <p>Value: <span bind:text="count" class="font-bold text-lg text-green-400"></span></p>
+        <p>Computed: <span bind:text="computedValue" class="font-bold text-lg text-teal-400"></span></p>
+      </div>
+      <button this="button" class="px-6 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">Reset</button>
+    </div> -->
+
+    <!-- <hr class="border-slate-700">
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">Fruits</legend>
+      <ul bind:html="fruits" class="list-none space-y-2"></ul>
+      <div class="flex flex-col space-y-2">
+        <div class="flex items-center space-x-2">
+          <input type="checkbox" id="apple" name="fruit[]" value="apple" bind:group="selectedFruits" class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+          <label for="apple" class="text-slate-300">Apple</label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="checkbox" id="banana" name="fruit[]" value="banana" bind:group="selectedFruits" class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+          <label for="banana" class="text-slate-300">Banana</label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="checkbox" id="mango" name="fruit[]" value="mango" bind:group="selectedFruits" class="h-4 w-4 text-sky-600 rounded focus:ring-sky-500">
+          <label for="mango" class="text-slate-300">Mango</label>
+        </div>
+      </div>
+    </fieldset> -->
+
+    <!-- <hr class="border-slate-700">
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">Agree</legend>
+      <div if="agreement" class="p-4 rounded-md bg-rose-900 text-rose-200" class:danger="isDanger">
+        <h3 class="text-lg font-semibold">Conditional Agree</h3>
+      </div>
+      <div class="flex space-x-4">
+        <div class="flex items-center space-x-2">
+          <input type="radio" id="agree-no" name="agree" value="no" bind:group="agree" class="h-4 w-4 text-sky-600 focus:ring-sky-500">
+          <label for="agree-no" class="text-slate-300">No</label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="radio" id="agree-yes" name="agree" value="yes" bind:group="agree" class="h-4 w-4 text-sky-600 focus:ring-sky-500">
+          <label for="agree-yes" class="text-slate-300">Yes</label>
+        </div>
+      </div>
+    </fieldset> -->
+
+    <hr class="border-slate-700">
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">Table</legend>
+      <div class="flex flex-col space-y-4">
+        <input type="number" bind:value="tableNumber" class="p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <ul class="list-none space-y-2" foreach="table">
+          <li class="p-3 bg-slate-700 rounded-md">
+            ${item}
+          </li>
+        </ul>
+      </div>
+    </fieldset>
+
+    <hr class="border-slate-700">
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">User Ages</legend>
+      <div class="flex items-center space-x-4">
+        <input type="number" bind:value="age" class="p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <button this="addage" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">Add</button>
+      </div>
+      <ul class="list-none space-y-2">
+        <li class="flex items-center justify-between p-3 bg-slate-700 rounded-md" foreach="users">
+          <span if="users.length>0">Name: ${item.name} Age: ${item.age}</span>
+          <button onclick="removeUser" class="px-3 py-1 bg-rose-600 text-white rounded-md hover:bg-rose-500 transition-colors duration-200">Remove</button>
+        </li>
+      </ul>
+    </fieldset>
+
+    <hr class="border-slate-700">
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">EMI Calculator</legend>
+      <div class="space-y-4">
+        <div>
+          <label for="loanAmount" class="block mb-2 text-slate-300">Loan Amount (₹)</label>
+          <input type="number" id="loanAmount" bind:value="loanAmount" min="0" step="1000" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label for="interestRate" class="block mb-2 text-slate-300">Interest Rate: <span bind:text="interestRate" class="font-semibold text-lg text-teal-400"></span>%</label>
+          <input type="range" id="interestRate" bind:value="interestRate" min="1" max="30" step="0.1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+        </div>
+        <div>
+          <label for="loanTerm" class="block mb-2 text-slate-300">Loan Term (Years)</label>
+          <input type="number" id="loanTerm" bind:value="loanTerm" min="1" max="30" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+      </div>
+      <div class="mt-4">
+        <h4 class="text-lg font-bold">Monthly EMI: <span class="text-green-400">₹<span bind:text="monthlyEMI"></span></span></h4>
+      </div>
+    </fieldset>
+
+    <hr class="border-slate-700">
+
+    
+
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4">
+      <legend class="text-lg font-semibold text-slate-300 px-2">City Search</legend>
+      <div class="relative">
+        <label for="citySearch" class="block mb-2 text-slate-300">Search City</label>
+        <input type="text" id="citySearch" bind:value="citySearch" placeholder="Type to search cities..." class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+      </div>
+      <div if="filteredCities.length > 0" class="bg-slate-700 rounded-md border border-slate-600">
+        <ul class="divide-y divide-slate-600">
+          <li class="p-3 hover:bg-slate-600 cursor-pointer transition-colors duration-200" foreach="filteredCities" onclick="selectCity">
+            ${item.name} - Population: ${item.population.toLocaleString()}
+          </li>
+        </ul>
+      </div>
+    </fieldset>
+
+  </div>
+</div>
 
     <!-- reactiveDom JS -->
 
@@ -128,6 +187,18 @@
             return table;
         });
 
+        // User Ages functionality
+        const age = signal(0);
+        const users = signal([
+            { name: "John", age: 25 },
+            { name: "Jane", age: 30 },
+            { name: "Jim", age: 35 },
+        ]);
+        function removeUser(event, index, item, arraySignalName) {
+            console.log(event, index, item, arraySignalName);
+            users.value = users.value.filter((_, i) => i != index);
+        }
+        
 
         // EMI Calculator signals
         const loanAmount = signal(100000);
@@ -174,7 +245,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
 
-            reactiveDom(window.explicitReactive, null, {
+            reactiveDom(false, document.getElementById('app1'), {
                 tableNumber,
                 table,
                 loanAmount,
@@ -185,8 +256,87 @@
                 filteredCities,
                 selectedCity,
                 cities,
+                age,
+                users,
+                removeUser
             })
+            addage.addEventListener('click', function() {
+                if (age.value > 0) {
+                    users.value = [...users.value, { name: `User${users.value.length + 1}`, age: age.value }];
+                    age.value = 0;
+                }
+            });
+
         })
+    </script>
+
+<div class="container mx-auto max-w-2xl bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-700 space-y-8">
+    <h2>App 2</h2>
+    <div class="space-y-4">
+    <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4" id="appCarSelection">
+      <legend class="text-lg font-semibold text-slate-300 px-2">Brand and Model Selection</legend>
+      <div class="space-y-4">
+        <div>
+          <label for="brandSelect" class="block mb-2 text-slate-300">Select Brand</label>
+          <select id="brandSelect" bind:value="selectedBrand" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Select a brand</option>
+            <option value="toyota">Toyota</option>
+            <option value="honda">Honda</option>
+            <option value="bmw">BMW</option>
+            <option value="audi">Audi</option>
+          </select>
+        </div>
+        <div>
+          <label for="modelSelect" class="block mb-2 text-slate-300">Select Model</label>
+          <select id="modelSelect" bind:value="selectedModel" this="modelSelect" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Select a model</option>
+            <option foreach="availableModels" value="${item.value}">${item.label}</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <hr class="border-slate-700">
+    </div>
+</div>
+
+    <script>
+        const selectedBrand = signal("");
+        const selectedModel = signal("");
+        const availableModels = compute(() => {
+            const brand = selectedBrand.value;
+            const models = {
+                toyota: [
+                    { value: "corolla", label: "Corolla" },
+                    { value: "camry", label: "Camry" },
+                    { value: "rav4", label: "RAV4" }
+                ],
+                honda: [
+                    { value: "civic", label: "Civic" },
+                    { value: "accord", label: "Accord" },
+                    { value: "crv", label: "CR-V" }
+                ],
+                bmw: [
+                    { value: "series3", label: "3 Series" },
+                    { value: "series5", label: "5 Series" },    
+                    { value: "x3", label: "X3" }
+                ],
+                audi: [
+                    { value: "a4", label: "A4" },
+                    { value: "a6", label: "A6" },
+                    { value: "q5", label: "Q5" }
+                ]
+            };
+            return models[brand] || [];
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            reactiveDom(false, document.getElementById('appCarSelection'), {
+                selectedBrand,
+                selectedModel,
+                availableModels
+            });
+        });
     </script>
 </body>
 

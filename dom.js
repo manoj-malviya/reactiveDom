@@ -206,10 +206,7 @@ const reactiveDom = (function() {
           data[key] = appOptions.methods[key];
         });
       }
-      // Call mounted hook if present
-      if (typeof appOptions.mounted === "function") {
-        appOptions.mounted();
-      }
+     
       // Use document.body as default target
       targetElement = targetElement || document.body;
     }
@@ -267,6 +264,11 @@ const reactiveDom = (function() {
         }
       });
     });
+
+     // Call mounted hook if present
+      if (typeof appOptions.mounted === "function") {
+        appOptions.mounted();
+      }
   }
 
   // Return only the public function

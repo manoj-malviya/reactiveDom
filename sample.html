@@ -67,6 +67,30 @@
           </li>
         </ul>
       </fieldset>
+
+
+      <hr class="border-slate-700">
+      <!-- EMI Calculator Sample -->
+      <fieldset class="border border-slate-700 rounded-lg p-4 space-y-4" id="emicalculator">
+        <legend class="text-lg font-semibold text-slate-300 px-2">EMI Calculator</legend>
+        <div class="space-y-4">
+          <div>
+            <label for="loanAmount" class="block mb-2 text-slate-300">Loan Amount (₹)</label>
+            <input type="number" id="loanAmount" bind:value="loanAmount" min="0" step="1000" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <div>
+            <label for="interestRate" class="block mb-2 text-slate-300">Interest Rate: <span bind:text="interestRate" class="font-semibold text-lg text-teal-400"></span>%</label>
+            <input type="range" id="interestRate" bind:value="interestRate" min="1" max="30" step="0.1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+          </div>
+          <div>
+            <label for="loanTerm" class="block mb-2 text-slate-300">Loan Term (Years)</label>
+            <input type="number" id="loanTerm" bind:value="loanTerm" min="1" max="30" class="w-full p-2 rounded-md bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+        <div class="mt-4">
+          <h4 class="text-lg font-bold">Monthly EMI: <span class="text-green-400">₹<span bind:text="monthlyEMI"></span></span></h4>
+        </div>
+      </fieldset>
     </div>
 </div>
 
@@ -160,6 +184,31 @@
         document.addEventListener('DOMContentLoaded', function() {
           reactiveDom(app, document.getElementById('appCarSelection'));
         });
+    </script>
+
+    <script>
+      // EMI Calculator App
+      const emiCalculatorApp = {
+        data: {
+          loanAmount: signal(500000),
+          interestRate: signal(7.5),
+          loanTerm: signal(15)
+        },
+        computed: {
+          monthlyEMI: function() {
+            const P = Number(emiCalculatorApp.data.loanAmount.value) || 0;
+            const R = (Number(emiCalculatorApp.data.interestRate.value) || 0) / (12 * 100);
+            const N = (Number(emiCalculatorApp.data.loanTerm.value) || 0) * 12;
+            if (R === 0) return (P / N).toFixed(2);
+            const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+            return emi.toFixed(2);
+          }
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', function() {
+        reactiveDom(emiCalculatorApp, document.getElementById('emicalculator'));
+      });
     </script>
 </body>
 
